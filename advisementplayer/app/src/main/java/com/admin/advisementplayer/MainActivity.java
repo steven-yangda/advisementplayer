@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         private int UDP_PORT = 8899;
 
         public void run() {
+            //代码上传测试
             DatagramSocket ds = null;
             try {
                 ds = new DatagramSocket(UDP_PORT);
