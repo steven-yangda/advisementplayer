@@ -18,13 +18,6 @@ public class AutoStartBroadcastReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
 
         Log.e(TAG,"开机");
-//        if (intent.getAction().equals(ACTION)) {
-//            Log.e(TAG,"开机启动");
-//            Intent mIntent = new Intent(context, MainActivity.class);
-//            mIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//
-//            context.startActivity(mIntent);
-//        }
         if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)){
             Log.e(TAG,"开机启动");
             Intent myIntent=new Intent(context,MainActivity.class);
