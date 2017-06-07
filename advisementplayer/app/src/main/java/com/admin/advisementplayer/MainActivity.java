@@ -22,10 +22,7 @@ public class MainActivity extends AppCompatActivity {
             my_webView.reload();
         }
     };
-//sssssssssssssssssssssssssssssssssssssssssssssssssss
-    //sssssssssssssssssssssssss
 
-    //sssssssssss
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
