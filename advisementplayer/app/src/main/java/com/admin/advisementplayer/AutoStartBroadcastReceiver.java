@@ -9,7 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-//开机自启动广播接受
+//开机自启动广播接收
 public class AutoStartBroadcastReceiver extends BroadcastReceiver {
     private static final String ACTION = "android.intent.action.BOOT_COMPLETED";
     private static final String TAG = "Receiver";

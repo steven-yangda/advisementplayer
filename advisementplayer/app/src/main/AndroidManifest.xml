@@ -19,10 +19,10 @@
             </intent-filter>
         </activity>
         <!-- 开机自启动广播接受 -->
-        <receiver android:name="com.admin.advisementplayer.AutoStartBroadcastReceiver" >
+        <receiver android:name=".AutoStartBroadcastReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
     </application>

@@ -6,6 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 import android.widget.Toast;
 
 
@@ -19,6 +22,8 @@ public class MainActivity extends AppCompatActivity {
     DatagramSocket ds;
     DatagramPacket dp;
     private long firstTime=0;
+    WebView my_webView;
+    private String url = "http://192.168.1.124/192.168.1.100.html";//http://192.168.1.124/pay1920.html
 
 
     @Override
@@ -26,13 +31,29 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         new startUdpServer().start();
+        initView();
     }
-
+    private void initView(){
+        my_webView = (WebView) findViewById(R.id.my_webView);
+        //启用支持javascript
+        WebSettings settings = my_webView.getSettings();
+        settings.setJavaScriptEnabled(true);
+        settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);
+        settings.setUseWideViewPort(true);
+        my_webView.loadUrl(url);
+    }
     Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+            if (url.equals(data)){
+                my_webView.reload();
+            }else {
+                url = data;
+                my_webView.loadUrl(url);
+            }
             Toast.makeText(MainActivity.this,data,Toast.LENGTH_SHORT).show();
+            my_webView.loadUrl(data);
         }
     };
 
@@ -54,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
                     handler.sendEmptyMessage(1);
                     InetAddress addr = dp.getAddress();
                     int port = dp.getPort();
-                    byte[] echo = "From Server:echo..........".getBytes();
+                    byte[] echo = "success".getBytes();
                     DatagramPacket dp2 = new DatagramPacket(echo, echo.length, addr, port);
                     ds.send(dp2);
                     isRun = false;
@@ -67,7 +88,56 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void udpClient(View view) {
+        new Thread(){
+            @Override
+            public void run() {
+                try{
+                    Log.i("miao","###############################################"+"prepared");
+                    DatagramSocket ds = new DatagramSocket();
+                    InetAddress addr = InetAddress.getByName("192.168.1.130");
+                    String data = "http://192.168.1.124/192.168.1.100.html";
+                    DatagramPacket dp = new DatagramPacket(data.getBytes(),data.length(), addr,8899);
+                    ds.send(dp);
 
+                    byte[] buf = new byte[1024];
+                    DatagramPacket dp2 = new DatagramPacket(buf,1024);
+                    ds.receive(dp2);
+                    String echo = new String(dp2.getData(),0,dp2.getLength());
+                    Log.i("miao","##########################################"+echo);
+
+                    ds.close();
+                }catch (Exception e){
+                    Log.i("miao","###############################################"+"Exception");
+                }
+            }
+        }.start();
+    }
+    public void udpClient2(View view) {
+        new Thread(){
+            @Override
+            public void run() {
+                try{
+                    Log.i("miao","###############################################"+"prepared");
+                    DatagramSocket ds = new DatagramSocket();
+                    InetAddress addr = InetAddress.getByName("192.168.1.130");
+                    String data = "http://192.168.1.124/pay1920.html";
+                    DatagramPacket dp = new DatagramPacket(data.getBytes(),data.length(), addr,8899);
+                    ds.send(dp);
+
+                    byte[] buf = new byte[1024];
+                    DatagramPacket dp2 = new DatagramPacket(buf,1024);
+                    ds.receive(dp2);
+                    String echo = new String(dp2.getData(),0,dp2.getLength());
+                    Log.i("miao","##########################################"+echo);
+
+                    ds.close();
+                }catch (Exception e){
+                    Log.i("miao","###############################################"+"Exception");
+                }
+            }
+        }.start();
+    }
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
