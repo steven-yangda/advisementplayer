@@ -4,73 +4,87 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.widget.Toast;
 
-import java.io.IOException;
-import java.net.BindException;
+
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.SocketException;
+import java.net.InetAddress;
 
 public class MainActivity extends AppCompatActivity {
-    private WebView my_webView;
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            my_webView.reload();
-        }
-    };
+    String data;
+    boolean isRun = false;
+    DatagramSocket ds;
+    DatagramPacket dp;
+    private long firstTime=0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initView();
+        new startUdpServer().start();
     }
 
-    private void initView() {
-        System.out.print("--------------");
-        my_webView = (WebView) findViewById(R.id.my_webView);
-        //启用支持javascript
-        WebSettings settings = my_webView.getSettings();
-        settings.setJavaScriptEnabled(true);
-        my_webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
-        my_webView.loadUrl("http:///www.baidu.com");
-//        new Thread(new UDPThread()).start();
-    }
+    Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            Toast.makeText(MainActivity.this,data,Toast.LENGTH_SHORT).show();
+        }
+    };
 
-    class UDPThread implements Runnable {
-
-        byte[] buf = new byte[1024];
-        private int UDP_PORT = 8899;
-
+    class startUdpServer extends Thread{
+        @Override
         public void run() {
-            //代码上传测试
-            DatagramSocket ds = null;
+            super.run();
             try {
-                ds = new DatagramSocket(UDP_PORT);
-            } catch (BindException e) {
-                System.out.println("UDP端口使用中...请重关闭程序启服务器");
-            } catch (SocketException e) {
-                e.printStackTrace();
-            }
-        /*用这个来处理循环接收数据包比较合理，服务器接收数据包一般都是转发至客户端，而客户端接收数据包一般处理后再发送到服务器，很复杂。不会
-            close()掉，下面只是简单的System.out.println("收到数据包!")*/
-            while (ds != null) {
-                DatagramPacket dp = new DatagramPacket(buf, buf.length);
-
-                try {
+                if (ds == null) {
+                    ds = new DatagramSocket(8899);
+                    byte[] buf = new byte[1024];
+                    dp = new DatagramPacket(buf, 1024);
+                }
+                while (!isRun) {
+                    isRun = true;
                     ds.receive(dp);
-                    System.out.println("收到数据包!");
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    data = new String(dp.getData(), 0, dp.getLength());
+                    Log.i("miao", "###############################################" + data);
+                    handler.sendEmptyMessage(1);
+                    InetAddress addr = dp.getAddress();
+                    int port = dp.getPort();
+                    byte[] echo = "From Server:echo..........".getBytes();
+                    DatagramPacket dp2 = new DatagramPacket(echo, echo.length, addr, port);
+                    ds.send(dp2);
+                    isRun = false;
+
                 }
 
+            } catch (Exception e) {
+                Log.i("miao", "###############################################" + "Exception");
             }
-
         }
-
     }
+
+
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        switch (keyCode){
+            case KeyEvent.KEYCODE_BACK:
+                long secondTime=System.currentTimeMillis();
+                if(secondTime-firstTime>2000){
+                    Toast.makeText(MainActivity.this,"再按一次退出程序",Toast.LENGTH_SHORT).show();
+                    firstTime=secondTime;
+                    return true;
+                }else{
+                    System.exit(0);
+                    ds.close();
+                }
+                break;
+        }
+        return super.onKeyUp(keyCode, event);
+    }
+
 }
