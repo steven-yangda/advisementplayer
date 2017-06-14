@@ -1,21 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="udpClient"
         android:onClick="udpClient"
-        android:visibility="gone"/>
+        android:text="udpClient"
+        android:visibility="gone" />
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="udpClient"
         android:onClick="udpClient2"
-        android:visibility="gone"/>
+        android:text="udpClient"
+        android:visibility="gone" />
+
     <WebView
         android:id="@+id/my_webView"
         android:layout_width="match_parent"
@@ -23,20 +27,21 @@
 
 
     </WebView>
-    <com.admin.advisementplayer.MarqueeView
-        android:id="@+id/marqueeView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
 
-        <TextView
-            android:id="@+id/my_textView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:text="Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do."
-            android:textSize="20sp"
-            android:textStyle="bold" />
-    </com.admin.advisementplayer.MarqueeView>
+    <LinearLayout
+        android:id="@+id/my_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/my_textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:visibility="gone" />
 
 </RelativeLayout>
